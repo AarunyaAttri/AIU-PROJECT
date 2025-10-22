@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parent Dashboard</title>
+    <link rel="stylesheet" href="parent-dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle Sidebar">
+                <i class="fas fa-bars"></i>
+            </button>
+            <nav>
+                <a href="#" class="active"><i class="fas fa-home"></i><span class="sidebar-label">Home</span></a>
+                <a href="#"><i class="fas fa-chart-line"></i><span class="sidebar-label">Student Progress</span></a>
+                <a href="#"><i class="fas fa-calendar-check"></i><span class="sidebar-label">Attendance</span></a>
+                <a href="#"><i class="fas fa-bell"></i><span class="sidebar-label">Notifications</span></a>
+                <a href="#"><i class="fas fa-cog"></i><span class="sidebar-label">Settings</span></a>
+                <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i><span class="sidebar-label">Logout</span></a>
+                <div class="modal-overlay" id="logoutModal">
+                    <div class="modal-content">
+                        <p>Are you sure you want to logout?</p>
+                        <button id="confirmLogout" class="login-btn" style="margin-right:1rem;">Yes</button>
+                        <button id="cancelLogout" class="login-btn" style="background:#e5e7eb;color:#374151;">Cancel</button>
+                    </div>
+                </div>
+            </nav>
+        </aside>
+        <main class="main-content">
+            <header class="header">
+                <span class="header-title">Parent Dashboard</span>
+                <span class="profile-icon" id="profileIcon"><i class="fas fa-user-circle"></i></span>
+                <div class="profile-dropdown" id="profileDropdown">
+                    <div class="profile-info">
+                        <div class="profile-name">Ahwani</div>
+                        <div class="profile-email">parent@email.com</div>
+                        <div class="profile-role">Role: Parent</div>
+                    </div>
+                </div>
+            </header>
+            <div class="top-bar">
+                <form class="search-bar" onsubmit="return false;">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search student records..." id="searchInput">
+                </form>
+
+            </div>
+            <section id="dashboardContent">
+                <!-- Home Content -->
+                <div class="dashboard-section" id="homeSection">
+                    <div class="card" style="margin-bottom:1.5rem;">
+                        <div class="card-header"><span class="card-title">Welcome, Parent!</span></div>
+                        <div class="card-content">View your child's latest progress and school updates below.</div>
+                    </div>
+                    <div class="dashboard-grid">
+                        <section class="card">
+                            <div class="card-header"><span class="card-title">Attendance</span></div>
+                            <div class="card-content"><strong>96%</strong> attendance<br>2 recent absences</div>
+                        </section>
+                        <section class="card">
+                            <div class="card-header"><span class="card-title">Recent Marks</span></div>
+                            <div class="card-content">
+                                <div id="recentMarksSummary"></div>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+                <!-- Student Progress Content -->
+                <div class="dashboard-section" id="progressSection" style="display:none;">
+                    <div class="card">
+                        <div class="card-header"><span class="card-title">Student Progress</span></div>
+                        <div class="card-content">
+                            <div style="overflow-x:auto;">
+                                <table class="marks-table" id="marksTable">
+                                    <thead>
+                                        <tr>
+                                            <th data-sort="subject">Subject</th>
+                                            <th data-sort="date">Date</th>
+                                            <th data-sort="type">Type</th>
+                                            <th data-sort="assessment">Assessment</th>
+                                            <th data-sort="score">Score</th>
+                                            <th data-sort="total">Total</th>
+                                            <th data-sort="percent">%</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Populated by JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div id="subjectStats" style="margin-top:1.5rem;"></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Attendance Content -->
+                <div class="dashboard-section" id="attendanceSection" style="display:none;">
+                    <div class="card">
+                        <div class="card-header" style="display:flex;align-items:center;justify-content:space-between;gap:1rem;">
+                            <span class="card-title">Subject-wise Attendance Report</span>
+                            <select id="attendanceTimeline" class="timeline-select">
+                                <option value="7">Last 7 Days</option>
+                                <option value="30">Last 30 Days</option>
+                                <option value="semester">Last Semester</option>
+                            </select>
+                        </div>
+                        <div class="card-content">
+                            <div style="overflow-x:auto;">
+                                <table class="attendance-table" id="attendanceTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Subject</th>
+                                            <th>Total Classes</th>
+                                            <th>Attended</th>
+                                            <th>Absent</th>
+                                            <th>Attendance %</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Populated by JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div style="margin-top:2rem;">
+                                <canvas id="attendanceChart" height="120"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Notifications Content -->
+                <div class="dashboard-section" id="notificationsSection" style="display:none;">
+                    <div class="card">
+                        <div class="card-header"><span class="card-title">Notifications</span></div>
+                        <div class="card-content">
+                            <ul class="notifications-list">
+                                <li class="notification-item expandable">Parent-Teacher meeting on Sep 30.<div class="notification-details">Meeting at 10am in Room 101. Please confirm attendance.</div></li>
+                                <li class="notification-item expandable">Science project due Oct 5.<div class="notification-details">Submit your project to the Science Lab by 3pm.</div></li>
+                                <li class="notification-item expandable">Attendance below 95% triggers alert.<div class="notification-details">Please ensure your child attends all classes to avoid further alerts.</div></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <!-- Settings Content -->
+                <div class="dashboard-section" id="settingsSection" style="display:none;">
+                    <!-- Account Management Card -->
+                    <div class="card collapsible-card">
+                        <div class="card-header collapsible-header"><span class="card-title">Account Management</span><button class="card-toggle"><i class="fas fa-chevron-up"></i></button></div>
+                        <div class="card-content">
+                            <form id="accountForm">
+                                <div class="form-row">
+                                    <label for="parentName">Name:</label>
+                                    <input type="text" id="parentName" name="parentName" value="Jane Doe" required>
+                                </div>
+                                <div class="form-row">
+                                    <label for="parentEmail">Email:</label>
+                                    <input type="email" id="parentEmail" name="parentEmail" value="parent@email.com" required>
+                                    <button type="button" class="verify-btn" id="verifyEmailBtn">Update Email</button>
+                                </div>
+                                <div class="form-row">
+                                    <label for="parentPhone">Phone Number:</label>
+                                    <input type="tel" id="parentPhone" name="parentPhone" value="555-123-4567" required>
+                                </div>
+                                <div class="form-row">
+                                    <label for="parentPassword">Password:</label>
+                                    <input type="password" id="parentPassword" name="parentPassword" placeholder="New Password">
+                                    <button type="button" class="verify-btn" id="verifyPasswordBtn">Update Password</button>
+                                </div>
+                                <div class="form-row">
+                                    <label>Linked Students:</label>
+                                    <div id="linkedStudents">
+                                        <div class="linked-student">John Doe <span class="student-id">(ID: 20231234)</span></div>
+                                        <div class="linked-student">Jane Doe <span class="student-id">(ID: 20231235)</span></div>
+                                    </div>
+                                    <button type="button" class="verify-btn" id="manageStudentsBtn">Manage</button>
+                                </div>
+                                <div class="form-row">
+                                    <label>2-Step Verification:</label>
+                                    <label class="switch">
+                                        <input type="checkbox" id="twoStepToggle">
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                                <button type="submit" class="login-btn" style="width:auto;">Save Changes</button>
+                            </form>
+                        </div>
+                    </div>
+                    <!-- Notification Preferences Card -->
+                    <div class="card collapsible-card">
+                        <div class="card-header collapsible-header"><span class="card-title">Notification Preferences</span><button class="card-toggle"><i class="fas fa-chevron-up"></i></button></div>
+                        <div class="card-content">
+                            <form id="notificationForm">
+                                <div class="form-row">
+                                    <label><input type="checkbox" name="notifEmail" checked> Email Notifications</label>
+                                </div>
+                                <div class="form-row">
+                                    <label><input type="checkbox" name="notifSMS"> SMS Notifications</label>
+                                </div>
+                                <div class="form-row">
+                                    <label><input type="checkbox" name="notifApp" checked> App Notifications</label>
+                                </div>
+                                <button type="submit" class="login-btn" style="width:auto;">Save Preferences</button>
+                            </form>
+                        </div>
+                    </div>
+                    <!-- Help & Support Card -->
+                    <div class="card collapsible-card">
+                        <div class="card-header collapsible-header"><span class="card-title">Help & Support</span><button class="card-toggle"><i class="fas fa-chevron-up"></i></button></div>
+                        <div class="card-content">
+                            <div class="faq-section">
+                                <h4>FAQs</h4>
+                                <ul>
+                                    <li><strong>How do I update my email?</strong> Use the Update Email button in Account Management. Password verification is required.</li>
+                                    <li><strong>How do I add another student?</strong> Click Manage in Linked Students to add or remove students.</li>
+                                    <li><strong>How do I contact support?</strong> Use the contact form below or email/call us directly.</li>
+                                </ul>
+                            </div>
+                            <div class="contact-section">
+                                <h4>Contact Info</h4>
+                                <div>Email: <a href="mailto:support@school.com">support@school.com</a></div>
+                                <div>Phone: <a href="tel:555-987-6543">555-987-6543</a></div>
+                                <form id="supportForm" style="margin-top:1rem;">
+                                    <label for="supportMsg">Send us a message:</label>
+                                    <textarea id="supportMsg" rows="3" style="width:100%;padding:0.5rem;border-radius:6px;border:1px solid #e5e7eb;resize:vertical;" required></textarea>
+                                    <button type="submit" class="login-btn" style="margin-top:0.7rem;">Submit Ticket</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Password Verification Modal -->
+                    <div class="modal-overlay" id="verifyModal">
+                        <div class="modal-content">
+                            <p>Please enter your current password to proceed:</p>
+                            <input type="password" id="verifyPasswordInput" style="width:80%;padding:0.5rem;margin:1rem 0;border-radius:6px;border:1px solid #e5e7eb;">
+                            <div>
+                                <button id="verifyConfirmBtn" class="login-btn" style="margin-right:1rem;">Verify</button>
+                                <button id="verifyCancelBtn" class="login-btn" style="background:#e5e7eb;color:#374151;">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="parent-dashboard.js"></script>
+</body>
+</html>
