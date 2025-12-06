@@ -1,2 +1,2 @@
 # SIH-Project
-automated attendance monitoring system
+automated attendance monitoring system.
